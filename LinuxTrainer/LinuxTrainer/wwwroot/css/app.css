@@ -1,0 +1,55 @@
+
+.dark-card {
+    background-color: #252535;
+    color: white;
+    border-radius: 12px;
+    border: 1px solid #3a3a4a;
+}
+
+.input-dark {
+    background-color: #1e1e2d !important;
+    color: white !important;
+    border-radius: 8px !important;
+}
+
+.input-dark::placeholder {
+    color: #a0a0c0 !important;
+}
+
+.mud-input-label {
+    color: #d0d0e0 !important;
+}
+
+.mud-input-control {
+    border-color: #4d4d6d !important;
+}
+
+.mud-button {
+    background-color: #1e1e2d !important;
+    color: white !important;
+    border: 1px solid #4d4d6d !important;
+    border-radius: 8px !important;
+}
+
+.mud-button:hover {
+    background-color: #2d2d4d !important;
+}
+
+.white-text {
+    color: white !important;
+}
+
+.ml-2 {
+    margin-left: 8px !important;
+}
+.mr-2 {
+    margin-right: 8px !important;
+}
+
+.mr-4 {
+    margin-right: 16px !important;
+}
+
+.ml-2 {
+    margin-left: 8px !important;
+}

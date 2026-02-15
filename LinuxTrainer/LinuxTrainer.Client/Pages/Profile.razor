@@ -1,0 +1,26 @@
+﻿@page "/profile"
+
+<PageTitle>Профиль</PageTitle>
+<div class="d-flex" style="height: 100vh;">
+    <!-- Левое меню -->
+    <MudPaper Width="250px" Class="py-3" Elevation="0">
+        <MudNavMenu>
+            <MudPaper Class="d-flex align-center pa-4 mb-2" Elevation="0">
+                <MudBadge Color="Color.Success" Overlap="true" Bordered="true" Class="mr-3">
+                    <MudAvatar>
+                        <MudImage Src="1.jpg" Style="height:64px; width:64px;"></MudImage>
+                    </MudAvatar>
+                </MudBadge>
+                <div>
+                    <MudNavLink Href="/profile Typo="Typo.subtitle1" Class="font-weight-bold">Администратор</MudNavLink>
+                </div>
+            </MudPaper>
+            
+            <MudDivider Class="my-2" />
+            <MudNavLink Href="/profile">Профиль</MudNavLink>
+            <MudNavLink Href="/profile/quests">Задания</MudNavLink>
+            <MudNavLink Href="/profile/settings">Настройки</MudNavLink>
+        </MudNavMenu>
+    </MudPaper>
+    <MudText Class="h1">тут Статистика профиля и ещё что нибудь</MudText>
+</div>

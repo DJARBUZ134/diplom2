@@ -1,0 +1,45 @@
+﻿@page "/"
+@inject NavigationManager NavigationManager
+
+<PageTitle>Авторизация</PageTitle>
+
+<div class="background-blur">
+    <MudPaper Class="d-flex justify-center align-center" Height="90vh" Width="100%">
+        <MudContainer MaxWidth="MaxWidth.Small" Class="d-flex justify-center align-center">
+            <MudPaper Height="450px" Width="350px" Class="dark-card d-flex flex-column justify-center align-center pa-6" Elevation="3">
+                <MudText Typo="Typo.h4" Class="mb-6 white-text">Авторизация</MudText>
+                
+                <MudTextField @bind-Value="login" Label="Логин" Variant="Variant.Filled" 
+                            Width="300px" Required="true" 
+                            InputClass="input-dark" />
+                
+                <MudTextField @bind-Value="password" Label="Пароль" Variant="Variant.Filled" 
+                            Width="300px" Required="true"
+                            InputClass="input-dark" />
+                <MudSwitch @bind-Value="Basic_Switch2"  Color="Color.Primary" />Показать пароль?
+                <MudButton Variant="Variant.Filled" Color="Color.Dark" Size="Size.Large" 
+                           OnClick="HandleLogin" Class="mt-4" Width="300px">
+                    Авторизоваться
+                </MudButton>
+            </MudPaper>
+        </MudContainer>
+    </MudPaper>
+</div>
+
+@code {
+    private string login = "";
+    private string password = "";
+    public bool Basic_Switch2 { get; set; } = true;
+
+    private async Task HandleLogin()
+    {
+        if(login == "admin" && password == "admin")
+        {
+            NavigationManager.NavigateTo("/profile");
+        }
+        else
+        {
+
+        }
+    }
+}
