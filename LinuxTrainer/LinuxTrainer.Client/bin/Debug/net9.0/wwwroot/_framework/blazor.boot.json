@@ -1,7 +1,7 @@
 {
   "mainAssemblyName": "LinuxTrainer.Client",
   "resources": {
-    "hash": "sha256-h6usuTbDRn7oL1t5tMWZPZ7W6rpcaOh2QE4As5s0eB8=",
+    "hash": "sha256-TytIhN0SNRjMf8AqtcbUETtot+9BwL1wAg2gPVn18yU=",
     "fingerprinting": {
       "Microsoft.AspNetCore.Authorization.9taw8vfmpb.wasm": "Microsoft.AspNetCore.Authorization.wasm",
       "Microsoft.AspNetCore.Components.kr0rm7hoa3.wasm": "Microsoft.AspNetCore.Components.wasm",
@@ -204,8 +204,8 @@
       "icudt_CJK.tjcz0u77k5.dat": "icudt_CJK.dat",
       "icudt_EFIGS.tptq2av103.dat": "icudt_EFIGS.dat",
       "icudt_no_CJK.lfu7j35m59.dat": "icudt_no_CJK.dat",
-      "LinuxTrainer.Client.5nzeswvqe7.wasm": "LinuxTrainer.Client.wasm",
-      "LinuxTrainer.Client.eiqorivhp3.pdb": "LinuxTrainer.Client.pdb"
+      "LinuxTrainer.Client.siek1rwu9n.wasm": "LinuxTrainer.Client.wasm",
+      "LinuxTrainer.Client.4r7qfxp0zx.pdb": "LinuxTrainer.Client.pdb"
     },
     "jsModuleNative": {
       "dotnet.native.xidrk0eo52.js": "sha256-OfGprhDb4vgzxzOBj9RRMcRnAdSZR0hH5g5LHA0MzIE="
@@ -418,10 +418,10 @@
       "WindowsBase.300iq62cmr.wasm": "sha256-gyJyeSLAns1YIwrPLmw2VAbNeQgpzgW5xIJovvySzEc=",
       "mscorlib.560m239brp.wasm": "sha256-XShGzkyhqE1Qwz15C0W5EDSl0wiqbw4NUP1UtzupbE4=",
       "netstandard.yg21u65s4h.wasm": "sha256-PjcsgKDGCmf1+ahJpjBZtaqHugXi6ZJaAVAkX0OzhaI=",
-      "LinuxTrainer.Client.5nzeswvqe7.wasm": "sha256-D8jTX7/DvHXd09lqH2fA9RFyxwp0Odk4Ju3XOC/JeTE="
+      "LinuxTrainer.Client.siek1rwu9n.wasm": "sha256-fAwWrCgyNuiMqkYysiFkdmyWwLDIYFvDtE8flYHnt0o="
     },
     "pdb": {
-      "LinuxTrainer.Client.eiqorivhp3.pdb": "sha256-yrBwL6PEpWaZH8ZT9YPWmwfMG4iwSZx7j0CLTvcbksc="
+      "LinuxTrainer.Client.4r7qfxp0zx.pdb": "sha256-QDM+5H2QYWPG7JStaiAwRpiPpw/N9sVuCZYMSzJK274="
     }
   },
   "cacheBootResources": true,

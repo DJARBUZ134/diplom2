@@ -1,26 +1,88 @@
 @page "/profile/quests"
+@using MudBlazor
 
-<PageTitle>Профиль</PageTitle>
+<PageTitle>Задания</PageTitle>
+
 <div class="d-flex" style="height: 100vh;">
-    <!-- Левое меню -->
-    <MudPaper Width="250px" Class="py-3" Elevation="0">
-        <MudNavMenu>
-            <MudPaper Class="d-flex align-center pa-4 mb-2" Elevation="0">
-                <MudBadge Color="Color.Success" Overlap="true" Bordered="true" Class="mr-3">
-                    <MudAvatar>
-                        <MudImage Src="1.jpg" Style="height:64px; width:64px;"></MudImage>
-                    </MudAvatar>
-                </MudBadge>
-                <div>
-                    <MudNavLink Href="/profile Typo="Typo.subtitle1" Class="font-weight-bold">Администратор</MudNavLink>
-                </div>
-            </MudPaper>
-            
-            <MudDivider Class="my-2" />
-            <MudNavLink Href="/profile">Профиль</MudNavLink>
-            <MudNavLink Href="/profile/quests">Задания</MudNavLink>
-            <MudNavLink Href="/profile/settings">Настройки</MudNavLink>
-        </MudNavMenu>
-    </MudPaper>
-    <MudText Class="h1">тут табличка с выбором заданий</MudText>
+
+    <MudContainer Class="mt-4">
+        <MudText Typo="Typo.h5" Class="mb-4">Список заданий</MudText>
+        
+        <MudTable T="Quest" Items="@quests" Hover="true" Breakpoint="Breakpoint.Sm" Dense="false">
+            <HeaderContent>
+                <MudTh>Название</MudTh>
+                <MudTh>Описание</MudTh>
+                <MudTh>Сложность</MudTh>
+                <MudTh></MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd DataLabel="Название">@context.Name</MudTd>
+                <MudTd DataLabel="Описание">@context.Description</MudTd>
+                <MudTd DataLabel="Сложность">
+                    <MudChip T="string" Color="@GetDifficultyColor(context.Difficulty)" Size="Size.Small">
+                        @context.Difficulty
+                    </MudChip>
+                </MudTd>
+                <MudTd DataLabel="Действия">
+                    <MudButton Variant="Variant.Filled" 
+                               Color="Color.Primary" 
+                               Size="Size.Small" 
+                               OnClick="() => StartQuest(context)"
+                               Disabled="@(context.Status == "Выполнено")">
+                        @(context.Status == "Выполнено" ? "✓ Выполнено" : "Начать")
+                    </MudButton>
+                </MudTd>
+            </RowTemplate>
+        </MudTable>
+    </MudContainer>
 </div>
+
+@code {
+    private List<Quest> quests = new()
+    {
+        new Quest { Name = "Основы Linux", Description = "Изучите базовые команды терминала", Difficulty = "Легкая"},
+        new Quest { Name = "Работа с файлами", Description = "Научитесь создавать и редактировать файлы", Difficulty = "Легкая"},
+        new Quest { Name = "Права доступа", Description = "Разберитесь с chmod и chown", Difficulty = "Средняя"},
+        new Quest { Name = "Настройка сети", Description = "Настройте сетевые интерфейсы", Difficulty = "Средняя"},
+        new Quest { Name = "Bash скрипты", Description = "Напишите свой первый скрипт", Difficulty = "Сложная"},
+        new Quest { Name = "Администрирование", Description = "Управление пользователями и группами", Difficulty = "Сложная"},
+    };
+
+    // Возвращает Color вместо string
+    private Color GetDifficultyColor(string difficulty)
+    {
+        return difficulty switch
+        {
+            "Легкая" => Color.Success,
+            "Средняя" => Color.Warning,
+            "Сложная" => Color.Error,
+            _ => Color.Default
+        };
+    }
+
+    private Color GetStatusColor(string status)
+    {
+        return status switch
+        {
+            "Доступно" => Color.Info,
+            "В процессе" => Color.Warning,
+            "Выполнено" => Color.Success,
+            "Заблокировано" => Color.Default,
+            _ => Color.Default
+        };
+    }
+
+    private void StartQuest(Quest quest)
+    {
+        Console.WriteLine($"Начато задание: {quest.Name}");
+    }
+
+    public class Quest
+    {
+        public string Name { get; set; } = "";
+        public string Description { get; set; } = "";
+        public string Difficulty { get; set; } = "";
+        public string Status { get; set; } = "";
+        public int Reward { get; set; }
+    }
+}

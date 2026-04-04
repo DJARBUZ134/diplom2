@@ -72,4 +72,5 @@ C:\Users\wss_v\Desktop\diplom2\LinuxTrainer\LinuxTrainer\obj\Debug\net9.0\refint
 C:\Users\wss_v\Desktop\diplom2\LinuxTrainer\LinuxTrainer\obj\Debug\net9.0\LinuxTrainer.pdb
 C:\Users\wss_v\Desktop\diplom2\LinuxTrainer\LinuxTrainer\obj\Debug\net9.0\LinuxTrainer.genruntimeconfig.cache
 C:\Users\wss_v\Desktop\diplom2\LinuxTrainer\LinuxTrainer\obj\Debug\net9.0\ref\LinuxTrainer.dll
-C:\Users\wss_v\Desktop\diplom2\LinuxTrainer\LinuxTrainer\obj\Debug\net9.0\compressed\b5pbqjos3m-8dui7ntaji.gz
+C:\Users\wss_v\Desktop\diplom2\LinuxTrainer\LinuxTrainer\obj\Debug\net9.0\LinuxTrainer.sourcelink.json
+C:\Users\wss_v\Desktop\diplom2\LinuxTrainer\LinuxTrainer\obj\Debug\net9.0\compressed\b5pbqjos3m-fn3hsudin7.gz

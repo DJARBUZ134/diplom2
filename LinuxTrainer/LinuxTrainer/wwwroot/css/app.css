@@ -5,7 +5,14 @@
     border-radius: 12px;
     border: 1px solid #3a3a4a;
 }
+.mud-theme-light .mud-filled-input .mud-input-label {
+    color: #1a1a1a !important; /* Почти чёрный цвет */
+    opacity: 0.85 !important;  /* Убираем излишнюю прозрачность */
+}
 
+.mud-theme-light .mud-filled-input input {
+    color: #1a1a1a !important; /* Цвет введённого текста */
+}
 .input-dark {
     background-color: #1e1e2d !important;
     color: white !important;
