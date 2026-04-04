@@ -7,7 +7,7 @@
 <img width="1850" height="930" alt="Screenshot_2" src="https://github.com/user-attachments/assets/914e4f2e-cf27-4ecd-81d3-546849d0e79b" />
 Картинка 2 - ошибка авторизации
 
-
+\n
 
 Статистика выполненых заданий и общий балл(картинка 3)
 <img width="1850" height="930" alt="Screenshot_3" src="https://github.com/user-attachments/assets/d4102983-eec2-41c2-9e83-b92cde52b452" />
