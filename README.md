@@ -4,6 +4,7 @@
 
 <img width="1850" height="930" alt="Screenshot_1" src="https://github.com/user-attachments/assets/c63bedad-ad69-4413-bd0f-8a71178bf49b" />
 Картинка 1 - авторизация
+
 <img width="1850" height="930" alt="Screenshot_2" src="https://github.com/user-attachments/assets/914e4f2e-cf27-4ecd-81d3-546849d0e79b" />
 Картинка 2 - ошибка авторизации
 
