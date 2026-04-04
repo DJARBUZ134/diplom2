@@ -1,21 +1,23 @@
 Дипломный проект Бортнова Ивана
-сделана эмуляция авторизации пока что без исключения на неправильный, (если admin и admin то переход на след. страницу, иначе нечего), так же показ/скрытие пароля, пока что не работает (картинка 1),
+сделана эмуляция авторизации пока что без исключения на неправильный, (если admin и admin то переход на след. страницу, иначе предупреждение не верный логин или пароль) (картинка 1),
 тут должна быть система профилей (аккаунтов), но это с бд будет сделано
 
-<img width="1850" height="900" alt="image" src="https://github.com/user-attachments/assets/a7e6fe46-1987-4bfe-88f5-fc675aa162b6" />
+<img width="1850" height="930" alt="Screenshot_1" src="https://github.com/user-attachments/assets/c63bedad-ad69-4413-bd0f-8a71178bf49b" />
 Картинка 1 - авторизация
+<img width="1850" height="930" alt="Screenshot_2" src="https://github.com/user-attachments/assets/914e4f2e-cf27-4ecd-81d3-546849d0e79b" />
+Картинка 2 - ошибка авторизации
 
 
 
-будет статистика профиля в виде круговой диаграммы скорее всего (картинка 2)
-<img width="1850" height="900" alt="image" src="https://github.com/user-attachments/assets/b382e61f-b9c6-440f-beba-2f1d59657282" />
-Картинка 2 - профиль
+Статистика выполненых заданий и общий балл(картинка 3)
+<img width="1850" height="930" alt="Screenshot_3" src="https://github.com/user-attachments/assets/d4102983-eec2-41c2-9e83-b92cde52b452" />
+Картинка 3 - профиль
 
-таблица с выбором Заданий (картинка 3)
-<img width="1850" height="900" alt="image" src="https://github.com/user-attachments/assets/25b1584b-a97a-493e-9f1d-18fc0cc112b2" />
-Картинка 3 - задания
+таблица с выбором Заданий (картинка 4)
+<img width="1850" height="930" alt="Screenshot_4" src="https://github.com/user-attachments/assets/3af990cf-f345-460d-8cdf-d64e7353f1e7" />
+Картинка 4 - задания
 
 Страница с настройками для профиля (картинка 4) 
 там будет чтото типо изменение аватарки, почты, пароля и т.п.
-<img width="1850" height="900" alt="image" src="https://github.com/user-attachments/assets/f78a1735-82d5-4af4-b618-7b8737f7bdc2" />
-Картинка 4 - настройки
+<img width="1850" height="930" alt="image" src="https://github.com/user-attachments/assets/f78a1735-82d5-4af4-b618-7b8737f7bdc2" />
+Картинка 5 - настройки
