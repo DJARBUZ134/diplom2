@@ -1,0 +1,152 @@
+@page "/admin/users"
+@attribute [Authorize(Roles = "Admin")]
+@rendermode InteractiveServer
+@layout LinuxTrainer.Components.Layout.MainLayout
+@using LinuxTrainer.Data.Entities
+@using LinuxTrainer.Services
+@inject IUserService UserSvc
+@inject ISnackbar Snackbar
+@inject IDialogService Dialogs
+
+<PageTitle>Пользователи</PageTitle>
+
+<MudContainer Class="mt-4" MaxWidth="MaxWidth.Large">
+    <div class="d-flex align-center mb-4">
+        <MudText Typo="Typo.h5">Пользователи</MudText>
+        <MudSpacer />
+        <MudButton Variant="Variant.Filled"
+                   Color="Color.Primary"
+                   StartIcon="@Icons.Material.Filled.PersonAdd"
+                   OnClick="OpenCreate">
+            Новый пользователь
+        </MudButton>
+    </div>
+
+    <MudPaper Elevation="2">
+        <MudTable T="User" Items="@list" Hover="true" Dense="true">
+            <HeaderContent>
+                <MudTh>ID</MudTh>
+                <MudTh>Логин</MudTh>
+                <MudTh>Имя</MudTh>
+                <MudTh>Роль</MudTh>
+                <MudTh></MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd DataLabel="ID">@context.Id</MudTd>
+                <MudTd DataLabel="Логин"><code>@context.Login</code></MudTd>
+                <MudTd DataLabel="Имя">@context.DisplayName</MudTd>
+                <MudTd DataLabel="Роль">
+                    <MudSelect T="string" Value="@context.Role"
+                               ValueChanged="@(v => ChangeRole(context, v))"
+                               Dense="true" Variant="Variant.Outlined" Margin="Margin.Dense">
+                        <MudSelectItem Value="@("Admin")">Admin</MudSelectItem>
+                        <MudSelectItem Value="@("Teacher")">Teacher</MudSelectItem>
+                        <MudSelectItem Value="@("Student")">Student</MudSelectItem>
+                    </MudSelect>
+                </MudTd>
+                <MudTd>
+                    <MudIconButton Icon="@Icons.Material.Filled.Key"
+                                   Size="Size.Small"
+                                   Title="Сбросить пароль"
+                                   OnClick="() => ResetPassword(context)" />
+                    <MudIconButton Icon="@Icons.Material.Filled.Delete"
+                                   Color="Color.Error"
+                                   Size="Size.Small"
+                                   Title="Удалить"
+                                   OnClick="() => Delete(context)" />
+                </MudTd>
+            </RowTemplate>
+        </MudTable>
+    </MudPaper>
+
+    @if (createOpen)
+    {
+        <MudPaper Class="pa-4 mt-4" Elevation="2">
+            <MudText Typo="Typo.h6" Class="mb-3">Создание пользователя</MudText>
+            <MudGrid>
+                <MudItem xs="12" sm="6">
+                    <MudTextField @bind-Value="newLogin" Label="Логин" Required="true" Variant="Variant.Outlined" />
+                </MudItem>
+                <MudItem xs="12" sm="6">
+                    <MudTextField @bind-Value="newDisplayName" Label="Имя" Variant="Variant.Outlined" />
+                </MudItem>
+                <MudItem xs="12" sm="6">
+                    <MudTextField @bind-Value="newPassword" Label="Пароль" Required="true"
+                                  InputType="InputType.Password" Variant="Variant.Outlined" />
+                </MudItem>
+                <MudItem xs="12" sm="6">
+                    <MudSelect T="string" @bind-Value="newRole" Label="Роль" Variant="Variant.Outlined">
+                        <MudSelectItem Value="@("Admin")">Admin</MudSelectItem>
+                        <MudSelectItem Value="@("Teacher")">Teacher</MudSelectItem>
+                        <MudSelectItem Value="@("Student")">Student</MudSelectItem>
+                    </MudSelect>
+                </MudItem>
+            </MudGrid>
+            <div class="d-flex gap-2 mt-3">
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="Create">Создать</MudButton>
+                <MudButton Variant="Variant.Text" OnClick="() => createOpen = false">Отмена</MudButton>
+            </div>
+        </MudPaper>
+    }
+</MudContainer>
+
+@code {
+    private List<User> list = new();
+    private bool createOpen;
+    private string newLogin = "";
+    private string newPassword = "";
+    private string newDisplayName = "";
+    private string newRole = "Student";
+
+    protected override async Task OnInitializedAsync() => list = await UserSvc.ListAsync();
+
+    private void OpenCreate() { createOpen = true; newLogin = ""; newPassword = ""; newDisplayName = ""; newRole = "Student"; }
+
+    private async Task Create()
+    {
+        if (string.IsNullOrWhiteSpace(newLogin) || string.IsNullOrWhiteSpace(newPassword))
+        {
+            Snackbar.Add("Логин и пароль обязательны", Severity.Warning);
+            return;
+        }
+        try
+        {
+            await UserSvc.CreateAsync(newLogin.Trim(), newPassword, newRole, newDisplayName.Trim());
+            list = await UserSvc.ListAsync();
+            createOpen = false;
+            Snackbar.Add("Пользователь создан", Severity.Success);
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add("Ошибка: " + ex.Message, Severity.Error);
+        }
+    }
+
+    private async Task ChangeRole(User u, string role)
+    {
+        await UserSvc.SetRoleAsync(u.Id, role);
+        list = await UserSvc.ListAsync();
+        Snackbar.Add($"Роль {u.Login} → {role}", Severity.Info);
+    }
+
+    private async Task ResetPassword(User u)
+    {
+        var result = await Dialogs.ShowMessageBox("Сброс пароля",
+            $"Сбросить пароль для {u.Login} на 'changeme123'?",
+            yesText: "Да", cancelText: "Отмена");
+        if (result != true) return;
+        await UserSvc.ResetPasswordAsync(u.Id, "changeme123");
+        Snackbar.Add($"Пароль {u.Login} сброшен на changeme123", Severity.Info);
+    }
+
+    private async Task Delete(User u)
+    {
+        var result = await Dialogs.ShowMessageBox("Удаление",
+            $"Удалить пользователя {u.Login}?",
+            yesText: "Удалить", cancelText: "Отмена");
+        if (result != true) return;
+        await UserSvc.DeleteAsync(u.Id);
+        list = await UserSvc.ListAsync();
+        Snackbar.Add("Удалено", Severity.Success);
+    }
+}

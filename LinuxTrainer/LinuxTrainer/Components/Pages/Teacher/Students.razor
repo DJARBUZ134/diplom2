@@ -1,0 +1,68 @@
+@page "/teacher/students"
+@attribute [Authorize(Roles = "Admin,Teacher")]
+@rendermode InteractiveServer
+@layout LinuxTrainer.Components.Layout.MainLayout
+@using LinuxTrainer.Data.Entities
+@using LinuxTrainer.Services
+@inject IUserService UserSvc
+@inject IProgressService Progress
+
+<PageTitle>Студенты</PageTitle>
+
+<MudContainer Class="mt-4" MaxWidth="MaxWidth.Large">
+    <MudText Typo="Typo.h5" Class="mb-4">Студенты и их прогресс</MudText>
+
+    @foreach (var s in students)
+    {
+        <MudPaper Class="pa-4 mb-3" Elevation="2">
+            <div class="d-flex align-center mb-2">
+                <MudAvatar Color="Color.Primary" Class="mr-3">
+                    @(s.DisplayName.Length > 0 ? s.DisplayName[..1] : s.Login[..1])
+                </MudAvatar>
+                <div>
+                    <MudText Typo="Typo.subtitle1" Class="font-weight-bold">@s.DisplayName</MudText>
+                    <MudText Typo="Typo.caption" Class="text-muted">@s.Login</MudText>
+                </div>
+                <MudSpacer />
+                @if (rowsByUser.TryGetValue(s.Id, out var rows))
+                {
+                    <MudChip T="string" Color="Color.Success" Size="Size.Small">
+                        Завершено: @rows.Count(r => r.Status == "Завершено")
+                    </MudChip>
+                    <MudChip T="string" Color="Color.Warning" Size="Size.Small">
+                        В процессе: @rows.Count(r => r.Status == "В процессе")
+                    </MudChip>
+                }
+            </div>
+
+            @if (rowsByUser.TryGetValue(s.Id, out var rows2))
+            {
+                <MudTable T="QuestRow" Items="@rows2" Dense="true">
+                    <HeaderContent>
+                        <MudTh>Задание</MudTh>
+                        <MudTh>Статус</MudTh>
+                        <MudTh>Балл</MudTh>
+                    </HeaderContent>
+                    <RowTemplate>
+                        <MudTd>@context.Name</MudTd>
+                        <MudTd>@context.Status</MudTd>
+                        <MudTd>@context.Rating.ToString("0.0")</MudTd>
+                    </RowTemplate>
+                </MudTable>
+            }
+        </MudPaper>
+    }
+</MudContainer>
+
+@code {
+    private List<User> students = new();
+    private Dictionary<int, List<QuestRow>> rowsByUser = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        var all = await UserSvc.ListAsync();
+        students = all.Where(u => u.Role == "Student").ToList();
+        foreach (var s in students)
+            rowsByUser[s.Id] = await Progress.ForUserAsync(s.Id);
+    }
+}

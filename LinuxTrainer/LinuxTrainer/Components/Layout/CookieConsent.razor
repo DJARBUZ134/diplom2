@@ -1,0 +1,51 @@
+@inject IJSRuntime JS
+
+@if (_visible)
+{
+    <MudPaper Class="cookie-consent" Elevation="4">
+        <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="3" Class="flex-wrap">
+            <MudIcon Icon="@Icons.Material.Filled.Cookie" Color="Color.Warning" />
+            <MudText Typo="Typo.body2" Class="flex-grow-1">
+                Этот сайт использует файлы cookie для обеспечения работы авторизации и сохранения настроек.
+                Продолжая использовать сайт, вы соглашаетесь с использованием cookie.
+            </MudText>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Small"
+                       OnClick="Accept">Принять</MudButton>
+        </MudStack>
+    </MudPaper>
+}
+
+<style>
+    .cookie-consent {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        z-index: 9999;
+        padding: 16px 24px;
+        border-radius: 8px 8px 0 0;
+        background: #1e1e2d !important;
+        border-top: 1px solid #7c5cff;
+    }
+</style>
+
+@code {
+    private bool _visible;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            var accepted = await JS.InvokeAsync<string?>(
+                "localStorage.getItem", "cookieConsent");
+            _visible = accepted != "true";
+            StateHasChanged();
+        }
+    }
+
+    private async Task Accept()
+    {
+        await JS.InvokeVoidAsync("localStorage.setItem", "cookieConsent", "true");
+        _visible = false;
+    }
+}

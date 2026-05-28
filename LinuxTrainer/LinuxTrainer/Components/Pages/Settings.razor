@@ -1,0 +1,148 @@
+@page "/profile/settings"
+@attribute [Authorize]
+@rendermode InteractiveServer
+@layout LinuxTrainer.Components.Layout.MainLayout
+@using System.Security.Claims
+@using LinuxTrainer.Services
+@inject IUserService UserSvc
+@inject AuthenticationStateProvider Auth
+@inject ISnackbar Snackbar
+
+<PageTitle>Настройки</PageTitle>
+
+<MudContainer MaxWidth="MaxWidth.Medium" Class="mt-4">
+    <MudText Typo="Typo.h5" Class="mb-4">Настройки профиля</MudText>
+
+    <MudPaper Class="pa-4 mb-3" Elevation="2">
+        <AuthorizeView>
+            <Authorized>
+                <MudText Typo="Typo.subtitle1" Class="mb-2">
+                    Имя: <b>@(context.User.FindFirst("display_name")?.Value
+                              ?? context.User.Identity?.Name)</b>
+                </MudText>
+                <MudText Typo="Typo.body2" Class="mb-2">
+                    Логин: <code>@context.User.Identity?.Name</code>
+                </MudText>
+                <MudText Typo="Typo.body2">
+                    Роль: <code>@context.User.FindFirst(ClaimTypes.Role)?.Value</code>
+                </MudText>
+            </Authorized>
+        </AuthorizeView>
+    </MudPaper>
+
+    <MudPaper Class="pa-4 mb-3" Elevation="2">
+        <MudText Typo="Typo.h6" Class="mb-3">Аватар</MudText>
+        <div class="d-flex align-center gap-4 mb-3">
+            <MudAvatar Size="Size.Large" Style="width:96px;height:96px;">
+                @if (!string.IsNullOrEmpty(displayed))
+                {
+                    <MudImage Src="@displayed" />
+                }
+                else
+                {
+                    <MudIcon Icon="@Icons.Material.Filled.Person" Size="Size.Large" />
+                }
+            </MudAvatar>
+            <div>
+                @if (status == AvatarStatus.Pending)
+                {
+                    <MudChip T="string" Color="Color.Warning" Size="Size.Small" Icon="@Icons.Material.Filled.HourglassTop">
+                        На проверке у преподавателя
+                    </MudChip>
+                }
+                else if (status == AvatarStatus.Approved)
+                {
+                    <MudChip T="string" Color="Color.Success" Size="Size.Small" Icon="@Icons.Material.Filled.CheckCircle">
+                        Одобрено
+                    </MudChip>
+                }
+                else
+                {
+                    <MudText Typo="Typo.caption" Class="text-muted">Аватар не установлен</MudText>
+                }
+                <MudText Typo="Typo.caption" Class="text-muted d-block mt-1">
+                    PNG/JPEG до 256 КБ. После загрузки попадает на проверку преподавателю.
+                </MudText>
+            </div>
+        </div>
+
+        <MudFileUpload T="IBrowserFile" FilesChanged="OnFile" Accept="image/png,image/jpeg" MaximumFileCount="1">
+            <ActivatorContent>
+                <MudButton Variant="Variant.Filled" Color="Color.Primary"
+                           StartIcon="@Icons.Material.Filled.CloudUpload">
+                    Выбрать изображение
+                </MudButton>
+            </ActivatorContent>
+        </MudFileUpload>
+
+        @if (!string.IsNullOrEmpty(uploadError))
+        {
+            <MudAlert Severity="Severity.Error" Class="mt-3">@uploadError</MudAlert>
+        }
+    </MudPaper>
+
+    <MudPaper Class="pa-4" Elevation="2">
+        <form action="/auth/logout" method="post">
+            <AntiforgeryToken />
+            <MudButton ButtonType="ButtonType.Submit"
+                       Variant="Variant.Filled"
+                       Color="Color.Error"
+                       StartIcon="@Icons.Material.Filled.Logout">
+                Выйти из аккаунта
+            </MudButton>
+        </form>
+    </MudPaper>
+</MudContainer>
+
+@code {
+    private enum AvatarStatus { None, Pending, Approved }
+
+    private int _userId;
+    private string? approved;
+    private string? pending;
+    private string? uploadError;
+    private const int MaxBytes = 256 * 1024;
+
+    private string? displayed => pending ?? approved;
+    private AvatarStatus status =>
+        pending is not null ? AvatarStatus.Pending :
+        approved is not null ? AvatarStatus.Approved :
+        AvatarStatus.None;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var state = await Auth.GetAuthenticationStateAsync();
+        if (int.TryParse(state.User.FindFirst(ClaimTypes.NameIdentifier)?.Value, out var id))
+        {
+            _userId = id;
+            await LoadAvatar();
+        }
+    }
+
+    private async Task LoadAvatar()
+    {
+        var users = await UserSvc.ListAsync();
+        var u = users.FirstOrDefault(x => x.Id == _userId);
+        approved = u?.AvatarApprovedBase64;
+        pending = u?.AvatarPendingBase64;
+    }
+
+    private async Task OnFile(IBrowserFile file)
+    {
+        uploadError = null;
+        if (file.Size > MaxBytes)
+        {
+            uploadError = $"Файл больше {MaxBytes / 1024} КБ";
+            return;
+        }
+
+        using var ms = new MemoryStream();
+        await file.OpenReadStream(MaxBytes).CopyToAsync(ms);
+        var base64 = Convert.ToBase64String(ms.ToArray());
+        var dataUri = $"data:{file.ContentType};base64,{base64}";
+
+        await UserSvc.SetPendingAvatarAsync(_userId, dataUri);
+        await LoadAvatar();
+        Snackbar.Add("Аватар отправлен на проверку", Severity.Success);
+    }
+}

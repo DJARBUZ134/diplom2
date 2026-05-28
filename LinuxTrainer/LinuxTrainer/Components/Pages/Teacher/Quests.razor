@@ -1,0 +1,183 @@
+@page "/teacher/quests"
+@attribute [Authorize(Roles = "Admin,Teacher")]
+@rendermode InteractiveServer
+@layout LinuxTrainer.Components.Layout.MainLayout
+@using System.Security.Claims
+@using LinuxTrainer.Data.Entities
+@using LinuxTrainer.Services
+@inject IProgressService Progress
+@inject AuthenticationStateProvider Auth
+@inject ISnackbar Snackbar
+@inject IDialogService Dialogs
+
+<PageTitle>Управление заданиями</PageTitle>
+
+<MudContainer Class="mt-4" MaxWidth="MaxWidth.Large">
+    <div class="d-flex align-center mb-4">
+        <MudText Typo="Typo.h5">Задания</MudText>
+        <MudSpacer />
+        <MudButton Variant="Variant.Filled"
+                   Color="Color.Primary"
+                   StartIcon="@Icons.Material.Filled.Add"
+                   OnClick="OpenCreate">
+            Новое задание
+        </MudButton>
+    </div>
+
+    <MudPaper Elevation="2">
+        <MudTable T="Quest" Items="@quests" Hover="true" Dense="true">
+            <HeaderContent>
+                <MudTh>#</MudTh>
+                <MudTh>Название</MudTh>
+                <MudTh>Вопрос</MudTh>
+                <MudTh>Ожидаемый ответ</MudTh>
+                <MudTh></MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd>@context.Order</MudTd>
+                <MudTd>@context.Name</MudTd>
+                <MudTd><MudText Typo="Typo.body2" Class="text-muted">@Truncate(context.Question, 60)</MudText></MudTd>
+                <MudTd><code>@context.ExpectedAnswer</code></MudTd>
+                <MudTd>
+                    <MudIconButton Icon="@Icons.Material.Filled.Edit"
+                                   Size="Size.Small"
+                                   OnClick="() => OpenEdit(context)" />
+                    <MudIconButton Icon="@Icons.Material.Filled.Delete"
+                                   Color="Color.Error"
+                                   Size="Size.Small"
+                                   OnClick="() => Delete(context)" />
+                </MudTd>
+            </RowTemplate>
+        </MudTable>
+    </MudPaper>
+
+    @if (formOpen)
+    {
+        <MudPaper Class="pa-4 mt-4" Elevation="2">
+            <MudText Typo="Typo.h6" Class="mb-3">
+                @(editingId is null ? "Новое задание" : $"Редактирование задания #{editingId}")
+            </MudText>
+            <MudGrid>
+                <MudItem xs="12" sm="6">
+                    <MudTextField @bind-Value="formName" Label="Название" Required="true" Variant="Variant.Outlined" />
+                </MudItem>
+                <MudItem xs="12" sm="6">
+                    <MudSelect T="string" @bind-Value="formDifficulty" Label="Сложность" Variant="Variant.Outlined">
+                        <MudSelectItem Value="@("Легкая")">Легкая</MudSelectItem>
+                        <MudSelectItem Value="@("Средняя")">Средняя</MudSelectItem>
+                        <MudSelectItem Value="@("Сложная")">Сложная</MudSelectItem>
+                    </MudSelect>
+                </MudItem>
+                <MudItem xs="12">
+                    <MudTextField @bind-Value="formDescription"
+                                  Label="Описание"
+                                  Lines="3"
+                                  Variant="Variant.Outlined" />
+                </MudItem>
+                <MudItem xs="12">
+                    <MudTextField @bind-Value="formQuestion"
+                                  Label="Вопрос"
+                                  Required="true"
+                                  Lines="2"
+                                  Variant="Variant.Outlined"
+                                  HelperText="Например: «Какой IP-адрес устройства настроен в /etc/network/interfaces?»" />
+                </MudItem>
+                <MudItem xs="12" sm="6">
+                    <MudTextField @bind-Value="formAnswer"
+                                  Label="Ожидаемый ответ"
+                                  Required="true"
+                                  Variant="Variant.Outlined"
+                                  HelperText="Сравнение без учёта регистра и крайних пробелов" />
+                </MudItem>
+            </MudGrid>
+            <div class="d-flex gap-2 mt-3">
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="Save">Сохранить</MudButton>
+                <MudButton Variant="Variant.Text" OnClick="@(() => formOpen = false)">Отмена</MudButton>
+            </div>
+        </MudPaper>
+    }
+</MudContainer>
+
+@code {
+    private List<Quest> quests = new();
+    private bool formOpen;
+    private int? editingId;
+    private string formName = "";
+    private string formDescription = "";
+    private string formQuestion = "";
+    private string formAnswer = "";
+    private string formDifficulty = "Средняя";
+    private int _userId;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var state = await Auth.GetAuthenticationStateAsync();
+        if (int.TryParse(state.User.FindFirst(ClaimTypes.NameIdentifier)?.Value, out var id))
+            _userId = id;
+        await Reload();
+    }
+
+    private async Task Reload() => quests = await Progress.AllQuestsAsync();
+
+    private void OpenCreate()
+    {
+        editingId = null;
+        formName = ""; formDescription = ""; formQuestion = ""; formAnswer = "";
+        formDifficulty = "Средняя";
+        formOpen = true;
+    }
+
+    private void OpenEdit(Quest q)
+    {
+        editingId = q.Id;
+        formName = q.Name;
+        formDescription = q.Description;
+        formQuestion = q.Question;
+        formAnswer = q.ExpectedAnswer;
+        formDifficulty = string.IsNullOrEmpty(q.Difficulty) ? "Средняя" : q.Difficulty;
+        formOpen = true;
+    }
+
+    private async Task Save()
+    {
+        if (string.IsNullOrWhiteSpace(formName) ||
+            string.IsNullOrWhiteSpace(formQuestion) ||
+            string.IsNullOrWhiteSpace(formAnswer))
+        {
+            Snackbar.Add("Название, вопрос и ответ обязательны", Severity.Warning);
+            return;
+        }
+
+        if (editingId is null)
+        {
+            await Progress.CreateAsync(formName.Trim(), formDescription.Trim(),
+                formQuestion.Trim(), formAnswer.Trim(), formDifficulty, _userId);
+            Snackbar.Add("Задание создано", Severity.Success);
+        }
+        else
+        {
+            await Progress.UpdateAsync(editingId.Value, formName.Trim(), formDescription.Trim(),
+                formQuestion.Trim(), formAnswer.Trim(), formDifficulty);
+            Snackbar.Add("Задание обновлено", Severity.Success);
+        }
+        formOpen = false;
+        await Reload();
+    }
+
+    private async Task Delete(Quest q)
+    {
+        var ok = await Dialogs.ShowMessageBox("Удаление задания",
+            $"Удалить «{q.Name}»? Это сбросит прогресс по нему у всех студентов.",
+            yesText: "Удалить", cancelText: "Отмена");
+        if (ok != true) return;
+        await Progress.DeleteAsync(q.Id);
+        await Reload();
+        Snackbar.Add("Задание удалено", Severity.Info);
+    }
+
+    private static string Truncate(string? s, int max)
+    {
+        if (string.IsNullOrEmpty(s)) return "";
+        return s.Length <= max ? s : s[..max] + "…";
+    }
+}

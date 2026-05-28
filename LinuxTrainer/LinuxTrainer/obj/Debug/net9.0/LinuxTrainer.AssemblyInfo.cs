@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("LinuxTrainer")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+9e9d60c667020160ce63c7b73da9650be33981aa")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+d386441e22370781d735d1dd4b36ecb429a4f32b")]
 [assembly: System.Reflection.AssemblyProductAttribute("LinuxTrainer")]
 [assembly: System.Reflection.AssemblyTitleAttribute("LinuxTrainer")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

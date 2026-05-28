@@ -1,0 +1,63 @@
+@page "/login"
+@page "/forbidden"
+@layout LinuxTrainer.Components.Layout.MainLayout
+@attribute [AllowAnonymous]
+@using Microsoft.AspNetCore.Authorization
+@inject NavigationManager Nav
+
+<PageTitle>Вход в LinuxTrainer</PageTitle>
+
+<div class="auth-shell">
+    <div class="auth-card">
+        <div class="auth-accent"></div>
+        <div class="auth-body">
+            <div class="auth-logo">
+                <span class="auth-logo-dot"></span>
+                <span>LinuxTrainer</span>
+            </div>
+            <h1 class="auth-title">Авторизация</h1>
+            <p class="auth-sub">Войдите, чтобы продолжить обучение</p>
+
+            @if (HasError)
+            {
+                <div class="auth-error">Неверный логин или пароль</div>
+            }
+            @if (Forbidden)
+            {
+                <div class="auth-error">Недостаточно прав для этой страницы</div>
+            }
+
+            <form method="post" action="/auth/login" class="auth-form">
+                <AntiforgeryToken />
+                <input type="hidden" name="returnUrl" value="@ReturnUrl" />
+
+                <label class="auth-field">
+                    <span>Логин</span>
+                    <input name="login" autocomplete="username" required autofocus />
+                </label>
+
+                <label class="auth-field">
+                    <span>Пароль</span>
+                    <input name="password" type="password" autocomplete="current-password" required />
+                </label>
+
+                <button type="submit" class="auth-submit">Войти</button>
+            </form>
+
+            <div class="auth-hint">
+                <div>Демо-аккаунты:</div>
+                <code>admin / admin123</code>
+                <code>teacher / teacher123</code>
+                <code>student / student123</code>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    [SupplyParameterFromQuery(Name = "error")] public string? Error { get; set; }
+    [SupplyParameterFromQuery(Name = "returnUrl")] public string? ReturnUrl { get; set; }
+
+    private bool HasError => Error == "1";
+    private bool Forbidden => new Uri(Nav.Uri).AbsolutePath == "/forbidden";
+}

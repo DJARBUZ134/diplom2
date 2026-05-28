@@ -1,0 +1,141 @@
+@page "/profile"
+@attribute [Authorize]
+@rendermode InteractiveServer
+@layout LinuxTrainer.Components.Layout.MainLayout
+@using System.Linq
+@using System.Security.Claims
+@using LinuxTrainer.Data.Entities
+@using LinuxTrainer.Services
+@inject IProgressService Progress
+@inject IUserService UserSvc
+@inject AuthenticationStateProvider Auth
+
+<PageTitle>Профиль</PageTitle>
+
+<MudContainer Class="mt-4" MaxWidth="MaxWidth.Large">
+    <MudPaper Class="pa-4 mb-4 d-flex align-center" Elevation="2">
+        <MudAvatar Size="Size.Large" Style="width:80px;height:80px;" Class="mr-4">
+            @if (!string.IsNullOrEmpty(_avatar))
+            {
+                <MudImage Src="@_avatar" />
+            }
+            else
+            {
+                <MudIcon Icon="@Icons.Material.Filled.Person" Size="Size.Large" />
+            }
+        </MudAvatar>
+        <div>
+            <MudText Typo="Typo.h5">@_displayName</MudText>
+            <MudText Typo="Typo.body2" Class="text-muted">@_login · @_role</MudText>
+        </div>
+    </MudPaper>
+
+    <MudGrid Spacing="4">
+        <MudItem xs="12" md="6">
+            <MudPaper Class="pa-4 d-flex align-center" Elevation="2">
+                <MudProgressCircular Value="@CompletionPercent"
+                                     Size="Size.Large"
+                                     Color="Color.Primary"
+                                     Class="mr-4" />
+                <div>
+                    <MudText Typo="Typo.subtitle1" Class="font-weight-bold">Выполнено заданий</MudText>
+                    <MudText Typo="Typo.body2" Class="text-muted">
+                        @completedQuests из @totalQuests
+                    </MudText>
+                    <MudText Typo="Typo.caption" Class="text-muted">
+                        @CompletionPercent% прогресс
+                    </MudText>
+                </div>
+            </MudPaper>
+        </MudItem>
+
+        <MudItem xs="12" md="6">
+            <MudPaper Class="pa-4 d-flex align-center" Elevation="2">
+                <div class="mr-4 d-flex align-center justify-center"
+                     style="width: 68px; height: 68px; border-radius: 50%; background-color: rgba(255, 193, 7, 0.15);">
+                    <MudText Typo="Typo.h4" Class="font-weight-bold" Color="Color.Warning">
+                        @averageRating.ToString("0.0")
+                    </MudText>
+                </div>
+                <div>
+                    <MudText Typo="Typo.subtitle1" Class="font-weight-bold">Средний балл</MudText>
+                    <MudText Typo="Typo.caption" Class="text-muted">
+                        Оценено заданий: @ratedQuests из @rows.Count
+                    </MudText>
+                </div>
+            </MudPaper>
+        </MudItem>
+    </MudGrid>
+
+    <MudPaper Class="pa-4 mt-4" Elevation="2">
+        <MudText Typo="Typo.h6" Class="mb-3">Детализация</MudText>
+        <MudTable T="QuestRow" Items="@rows" Dense="true" Hover="true">
+            <HeaderContent>
+                <MudTh>Задание</MudTh>
+                <MudTh>Балл</MudTh>
+                <MudTh>Статус</MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd DataLabel="Задание">@context.Name</MudTd>
+                <MudTd DataLabel="Балл">
+                    <MudText Typo="Typo.body2" Class="font-weight-bold">
+                        @context.Rating.ToString("0.0") / 5.0
+                    </MudText>
+                </MudTd>
+                <MudTd DataLabel="Статус">
+                    <MudChip T="string" Color="@StatusColor(context.Status)" Size="Size.Small">
+                        @context.Status
+                    </MudChip>
+                </MudTd>
+            </RowTemplate>
+        </MudTable>
+    </MudPaper>
+</MudContainer>
+
+@code {
+    private List<QuestRow> rows = new();
+    private string _displayName = "";
+    private string _login = "";
+    private string _role = "";
+    private string? _avatar;
+
+    private int totalQuests => rows.Count;
+    private int completedQuests => rows.Count(s => s.Status == QuestStatus.Completed);
+    private double CompletionPercent => totalQuests > 0
+        ? Math.Round((double)completedQuests / totalQuests * 100)
+        : 0;
+    private int ratedQuests => rows.Count(s => s.Rating > 0);
+    private double averageRating
+    {
+        get
+        {
+            var rated = rows.Where(s => s.Rating > 0).ToList();
+            return rated.Count == 0 ? 0 : Math.Round(rated.Average(s => s.Rating), 1);
+        }
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var state = await Auth.GetAuthenticationStateAsync();
+        _login = state.User.Identity?.Name ?? "";
+        _displayName = state.User.FindFirst("display_name")?.Value ?? _login;
+        _role = state.User.FindFirst(ClaimTypes.Role)?.Value ?? "";
+
+        var idStr = state.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if (int.TryParse(idStr, out var userId))
+        {
+            rows = await Progress.ForUserAsync(userId);
+            var info = await UserSvc.GetInfoAsync(userId);
+            _avatar = info?.AvatarBase64;
+        }
+    }
+
+    private static Color StatusColor(string status) => status switch
+    {
+        QuestStatus.Completed => Color.Success,
+        QuestStatus.PendingReview => Color.Info,
+        QuestStatus.InProgress => Color.Warning,
+        QuestStatus.Locked => Color.Default,
+        _ => Color.Info
+    };
+}

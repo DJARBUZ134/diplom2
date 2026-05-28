@@ -1,0 +1,154 @@
+@page "/teacher/reviews"
+@attribute [Authorize(Roles = "Admin,Teacher")]
+@rendermode InteractiveServer
+@layout LinuxTrainer.Components.Layout.MainLayout
+@using LinuxTrainer.Services
+@inject IProgressService Progress
+@inject IUserService UserSvc
+@inject ISnackbar Snackbar
+
+<PageTitle>Модерация</PageTitle>
+
+<MudContainer Class="mt-4" MaxWidth="MaxWidth.Large">
+    <MudText Typo="Typo.h5" Class="mb-4">Модерация</MudText>
+
+    <MudTabs Outlined="true" Position="Position.Top" Rounded="true" Border="true">
+        <MudTabPanel Text="@($"Ответы ({pending.Count})")">
+            @if (pending.Count == 0)
+            {
+                <MudText Class="pa-4 text-muted">Нет ответов, ожидающих проверки.</MudText>
+            }
+            else
+            {
+                @foreach (var p in pending)
+                {
+                    <MudPaper Class="pa-4 mb-3" Elevation="2">
+                        <div class="d-flex align-center mb-2">
+                            <MudText Typo="Typo.subtitle1" Class="font-weight-bold">@p.UserDisplay</MudText>
+                            <MudChip T="string" Size="Size.Small" Class="ml-3">@p.QuestName</MudChip>
+                        </div>
+                        <MudText Typo="Typo.body2" Class="mb-2 text-muted">Вопрос: @p.Question</MudText>
+                        <MudText Typo="Typo.body2" Class="mb-1">
+                            Ожидаемый ответ: <code>@p.ExpectedAnswer</code>
+                        </MudText>
+                        <MudText Typo="Typo.body2" Class="mb-3">
+                            Ответ студента: <code>@p.LastAnswer</code>
+                        </MudText>
+
+                        <div class="d-flex align-center gap-2">
+                            <MudNumericField T="double" Label="Балл"
+                                             @bind-Value="ratings[p.ProgressId]"
+                                             Min="0" Max="5" Step=".5" Variant="Variant.Outlined" />
+                            <MudTextField @bind-Value="comments[p.ProgressId]"
+                                          Label="Комментарий (для отклонения)"
+                                          Variant="Variant.Outlined"
+                                          Class="flex-grow-1" />
+                            <MudButton Variant="Variant.Filled" Color="Color.Success"
+                                       StartIcon="@Icons.Material.Filled.Check"
+                                       OnClick="() => Approve(p)">
+                                Одобрить
+                            </MudButton>
+                            <MudButton Variant="Variant.Outlined" Color="Color.Error"
+                                       StartIcon="@Icons.Material.Filled.Close"
+                                       OnClick="() => Reject(p)">
+                                Отклонить
+                            </MudButton>
+                        </div>
+                    </MudPaper>
+                }
+            }
+        </MudTabPanel>
+
+        <MudTabPanel Text="@($"Аватары ({avatars.Count})")">
+            @if (avatars.Count == 0)
+            {
+                <MudText Class="pa-4 text-muted">Нет аватаров на проверке.</MudText>
+            }
+            else
+            {
+                <MudGrid Spacing="3" Class="pa-2">
+                    @foreach (var a in avatars)
+                    {
+                        <MudItem xs="12" sm="6" md="4">
+                            <MudPaper Class="pa-4" Elevation="2">
+                                <div class="d-flex align-center mb-3">
+                                    <MudAvatar Size="Size.Large" Class="mr-3">
+                                        <MudImage Src="@a.AvatarBase64" />
+                                    </MudAvatar>
+                                    <div>
+                                        <MudText Typo="Typo.subtitle1" Class="font-weight-bold">
+                                            @(string.IsNullOrWhiteSpace(a.DisplayName) ? a.Login : a.DisplayName)
+                                        </MudText>
+                                        <MudText Typo="Typo.caption" Class="text-muted">@a.Login</MudText>
+                                    </div>
+                                </div>
+                                <div class="d-flex gap-2">
+                                    <MudButton Variant="Variant.Filled" Color="Color.Success"
+                                               StartIcon="@Icons.Material.Filled.Check"
+                                               OnClick="() => ApproveAvatar(a.UserId)">
+                                        Одобрить
+                                    </MudButton>
+                                    <MudButton Variant="Variant.Outlined" Color="Color.Error"
+                                               StartIcon="@Icons.Material.Filled.Close"
+                                               OnClick="() => RejectAvatar(a.UserId)">
+                                        Отклонить
+                                    </MudButton>
+                                </div>
+                            </MudPaper>
+                        </MudItem>
+                    }
+                </MudGrid>
+            }
+        </MudTabPanel>
+    </MudTabs>
+</MudContainer>
+
+@code {
+    private List<PendingReview> pending = new();
+    private List<PendingAvatar> avatars = new();
+    private Dictionary<int, double> ratings = new();
+    private Dictionary<int, string> comments = new();
+
+    protected override async Task OnInitializedAsync() => await Reload();
+
+    private async Task Reload()
+    {
+        pending = await Progress.ListPendingAsync();
+        avatars = await UserSvc.ListPendingAvatarsAsync();
+        foreach (var p in pending)
+        {
+            if (!ratings.ContainsKey(p.ProgressId)) ratings[p.ProgressId] = 5.0;
+            if (!comments.ContainsKey(p.ProgressId)) comments[p.ProgressId] = "";
+        }
+    }
+
+    private async Task Approve(PendingReview p)
+    {
+        await Progress.ApproveAsync(p.ProgressId, ratings.GetValueOrDefault(p.ProgressId, 5.0));
+        Snackbar.Add($"Задание «{p.QuestName}» одобрено для {p.UserDisplay}", Severity.Success);
+        await Reload();
+    }
+
+    private async Task Reject(PendingReview p)
+    {
+        var comment = comments.GetValueOrDefault(p.ProgressId, "").Trim();
+        if (string.IsNullOrEmpty(comment)) comment = "Требуется доработка";
+        await Progress.RejectAsync(p.ProgressId, comment);
+        Snackbar.Add($"Ответ {p.UserDisplay} отправлен на доработку", Severity.Info);
+        await Reload();
+    }
+
+    private async Task ApproveAvatar(int userId)
+    {
+        await UserSvc.ApproveAvatarAsync(userId);
+        Snackbar.Add("Аватар одобрен", Severity.Success);
+        await Reload();
+    }
+
+    private async Task RejectAvatar(int userId)
+    {
+        await UserSvc.RejectAvatarAsync(userId);
+        Snackbar.Add("Аватар отклонён", Severity.Info);
+        await Reload();
+    }
+}

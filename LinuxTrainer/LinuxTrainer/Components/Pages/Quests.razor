@@ -1,0 +1,107 @@
+@page "/profile/quests"
+@attribute [Authorize]
+@rendermode InteractiveServer
+@layout LinuxTrainer.Components.Layout.MainLayout
+@using System.Security.Claims
+@using LinuxTrainer.Data.Entities
+@using LinuxTrainer.Services
+@inject IProgressService Progress
+@inject AuthenticationStateProvider Auth
+@inject NavigationManager Nav
+
+<PageTitle>Задания</PageTitle>
+
+<MudContainer Class="mt-4" MaxWidth="MaxWidth.Large">
+    <MudText Typo="Typo.h5" Class="mb-1">Список заданий</MudText>
+    <MudText Typo="Typo.body2" Class="mb-4 text-muted">
+        Задания открываются по порядку: следующее становится доступным после того, как предыдущее одобрит преподаватель.
+    </MudText>
+
+    <MudGrid Spacing="3">
+        @foreach (var q in rows)
+        {
+            <MudItem xs="12" sm="6" md="4">
+                <MudPaper Class="quest-card pa-4 d-flex flex-column" Elevation="2"
+                          Style="@(q.Status == QuestStatus.Locked ? "opacity:.55;" : "")">
+                    <div class="d-flex align-center mb-2">
+                        <MudIcon Icon="@StatusIcon(q.Status)" Color="@StatusColor(q.Status)" Class="mr-2" />
+                        <MudText Typo="Typo.subtitle1" Class="font-weight-bold">@q.Name</MudText>
+                    </div>
+                    <MudText Typo="Typo.body2" Class="mb-3 text-muted flex-grow-1">@q.Description</MudText>
+                    <div class="d-flex align-center mb-3">
+                        <MudChip T="string" Size="Size.Small" Variant="Variant.Outlined">
+                            @q.Status
+                        </MudChip>
+                        @if (q.Rating > 0)
+                        {
+                            <MudSpacer />
+                            <MudText Typo="Typo.caption" Class="text-muted">Балл: @q.Rating.ToString("0.0")</MudText>
+                        }
+                    </div>
+                    @if (!string.IsNullOrWhiteSpace(q.ReviewComment))
+                    {
+                        <MudAlert Severity="Severity.Warning" Dense="true" Class="mb-2">
+                            Комментарий: @q.ReviewComment
+                        </MudAlert>
+                    }
+                    <MudButton Variant="Variant.Filled"
+                               Color="Color.Primary"
+                               FullWidth="true"
+                               Disabled="@(q.Status == QuestStatus.Locked || q.Status == QuestStatus.Completed)"
+                               OnClick="() => Open(q)">
+                        @ButtonLabel(q.Status)
+                    </MudButton>
+                </MudPaper>
+            </MudItem>
+        }
+    </MudGrid>
+</MudContainer>
+
+@code {
+    private List<QuestRow> rows = new();
+    private int _userId;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var state = await Auth.GetAuthenticationStateAsync();
+        if (int.TryParse(state.User.FindFirst(ClaimTypes.NameIdentifier)?.Value, out var id))
+        {
+            _userId = id;
+            rows = await Progress.ForUserAsync(id);
+        }
+    }
+
+    private void Open(QuestRow q)
+    {
+        if (q.Status == QuestStatus.Locked) return;
+        Nav.NavigateTo($"/profile/quests/{q.QuestId}");
+    }
+
+    private static string ButtonLabel(string status) => status switch
+    {
+        QuestStatus.Completed => "Выполнено",
+        QuestStatus.Locked => "Закрыто",
+        QuestStatus.InProgress => "Продолжить",
+        QuestStatus.PendingReview => "На проверке",
+        QuestStatus.Rejected => "Продолжить",
+        _ => "Начать"
+    };
+
+    private static Color StatusColor(string status) => status switch
+    {
+        QuestStatus.Completed => Color.Success,
+        QuestStatus.PendingReview => Color.Info,
+        QuestStatus.InProgress => Color.Warning,
+        QuestStatus.Locked => Color.Default,
+        _ => Color.Primary
+    };
+
+    private static string StatusIcon(string status) => status switch
+    {
+        QuestStatus.Completed => Icons.Material.Filled.CheckCircle,
+        QuestStatus.PendingReview => Icons.Material.Filled.HourglassTop,
+        QuestStatus.InProgress => Icons.Material.Filled.PlayCircle,
+        QuestStatus.Locked => Icons.Material.Filled.Lock,
+        _ => Icons.Material.Filled.RadioButtonUnchecked
+    };
+}

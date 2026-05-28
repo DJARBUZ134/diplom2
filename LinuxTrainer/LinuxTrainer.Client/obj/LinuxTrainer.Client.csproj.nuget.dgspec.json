@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\wss_v\\Desktop\\diplom2\\LinuxTrainer\\LinuxTrainer.Client\\LinuxTrainer.Client.csproj": {}
+    "C:\\Users\\wss_v\\Desktop\\diplom2\\linuxtrainer\\LinuxTrainer.Client\\LinuxTrainer.Client.csproj": {}
   },
   "projects": {
-    "C:\\Users\\wss_v\\Desktop\\diplom2\\LinuxTrainer\\LinuxTrainer.Client\\LinuxTrainer.Client.csproj": {
+    "C:\\Users\\wss_v\\Desktop\\diplom2\\linuxtrainer\\LinuxTrainer.Client\\LinuxTrainer.Client.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\wss_v\\Desktop\\diplom2\\LinuxTrainer\\LinuxTrainer.Client\\LinuxTrainer.Client.csproj",
+        "projectUniqueName": "C:\\Users\\wss_v\\Desktop\\diplom2\\linuxtrainer\\LinuxTrainer.Client\\LinuxTrainer.Client.csproj",
         "projectName": "LinuxTrainer.Client",
-        "projectPath": "C:\\Users\\wss_v\\Desktop\\diplom2\\LinuxTrainer\\LinuxTrainer.Client\\LinuxTrainer.Client.csproj",
+        "projectPath": "C:\\Users\\wss_v\\Desktop\\diplom2\\linuxtrainer\\LinuxTrainer.Client\\LinuxTrainer.Client.csproj",
         "packagesPath": "C:\\Users\\wss_v\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\wss_v\\Desktop\\diplom2\\LinuxTrainer\\LinuxTrainer.Client\\obj\\",
+        "outputPath": "C:\\Users\\wss_v\\Desktop\\diplom2\\linuxtrainer\\LinuxTrainer.Client\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -50,7 +50,15 @@
         "net9.0": {
           "targetAlias": "net9.0",
           "dependencies": {
+            "Microsoft.AspNetCore.Components.Authorization": {
+              "target": "Package",
+              "version": "[9.*, )"
+            },
             "Microsoft.AspNetCore.Components.WebAssembly": {
+              "target": "Package",
+              "version": "[9.*, )"
+            },
+            "Microsoft.AspNetCore.Components.WebAssembly.Authentication": {
               "target": "Package",
               "version": "[9.*, )"
             },

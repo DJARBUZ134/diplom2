@@ -1,0 +1,171 @@
+@inherits LayoutComponentBase
+@using System.Security.Claims
+@using LinuxTrainer.Services
+@inject NavigationManager NavManager
+@inject IUserService UserSvc
+@inject AuthenticationStateProvider Auth
+
+<MudThemeProvider Theme="@_theme" IsDarkMode="true" />
+<MudPopoverProvider />
+<MudDialogProvider />
+<MudSnackbarProvider />
+
+<AuthorizeView>
+    <Authorized>
+        <MudLayout>
+            <MudAppBar Elevation="1">
+                <MudIconButton Icon="@Icons.Material.Filled.Menu"
+                               Color="Color.Inherit"
+                               Edge="Edge.Start"
+                               OnClick="DrawerToggle" />
+
+                <MudText Typo="Typo.h5" Class="ml-3">LinuxTrainer</MudText>
+                <MudSpacer />
+                <MudChip T="string" Size="Size.Small" Color="Color.Primary" Variant="Variant.Outlined">
+                    @RoleLabel(context.User.FindFirst(ClaimTypes.Role)?.Value)
+                </MudChip>
+                <form action="/auth/logout" method="post" style="margin-left: 12px;">
+                    <AntiforgeryToken />
+                    <MudButton ButtonType="ButtonType.Submit"
+                               Variant="Variant.Text"
+                               Color="Color.Inherit"
+                               StartIcon="@Icons.Material.Filled.Logout">
+                        Выйти
+                    </MudButton>
+                </form>
+            </MudAppBar>
+
+            <MudDrawer @bind-Open="@_drawerOpen" ClipMode="DrawerClipMode.Always">
+                <MudNavMenu>
+                    <MudPaper Class="d-flex align-center gap-3 pa-4 mb-2" Elevation="0">
+                        <MudAvatar Color="Color.Primary">
+                            @if (!string.IsNullOrEmpty(_avatar))
+                            {
+                                <MudImage Src="@_avatar" />
+                            }
+                            else
+                            {
+                                @InitialsFor(context.User.FindFirst("display_name")?.Value
+                                    ?? context.User.Identity?.Name)
+                            }
+                        </MudAvatar>
+                        <div>
+                            <MudText Typo="Typo.subtitle1" Class="font-weight-bold">
+                                @(context.User.FindFirst("display_name")?.Value
+                                    ?? context.User.Identity?.Name)
+                            </MudText>
+                            <MudText Typo="Typo.caption" Class="text-muted">
+                                @context.User.Identity?.Name
+                            </MudText>
+                        </div>
+                    </MudPaper>
+
+                    <MudDivider Class="my-2" />
+                    <MudNavLink Href="/profile" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Person">Профиль</MudNavLink>
+                    <MudNavLink Href="/profile/quests" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Assignment">Задания</MudNavLink>
+                    <MudNavLink Href="/profile/terminal" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Terminal">Терминал</MudNavLink>
+                    <MudNavLink Href="/profile/settings" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Settings">Настройки</MudNavLink>
+
+                    <AuthorizeView Roles="Admin,Teacher" Context="teacherCtx">
+                        <MudDivider Class="my-2" />
+                        <MudNavLink Href="/teacher/students" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Groups">Студенты</MudNavLink>
+                        <MudNavLink Href="/teacher/quests" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.AssignmentTurnedIn">Задания (модерация)</MudNavLink>
+                        <MudNavLink Href="/teacher/reviews" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.RateReview">Модерация</MudNavLink>
+                    </AuthorizeView>
+                    <AuthorizeView Roles="Admin" Context="adminCtx">
+                        <MudNavLink Href="/admin/users" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.AdminPanelSettings">Пользователи</MudNavLink>
+                    </AuthorizeView>
+                </MudNavMenu>
+            </MudDrawer>
+
+            <MudMainContent Class="pt-16 pa-4">
+                @Body
+            </MudMainContent>
+        </MudLayout>
+    </Authorized>
+    <NotAuthorized>
+        <MudMainContent>
+            @Body
+        </MudMainContent>
+    </NotAuthorized>
+</AuthorizeView>
+
+<div id="blazor-error-ui" data-nosnippet>
+    An unhandled error has occurred.
+    <a href="." class="reload">Reload</a>
+    <span class="dismiss">🗙</span>
+</div>
+
+@code {
+    private bool _drawerOpen = true;
+    private MudTheme _theme = null!;
+    private string? _avatar;
+
+    protected override void OnInitialized()
+    {
+        _theme = new MudTheme
+        {
+            PaletteDark = _darkPalette,
+            LayoutProperties = new LayoutProperties()
+        };
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var state = await Auth.GetAuthenticationStateAsync();
+        if (state.User.Identity?.IsAuthenticated == true &&
+            int.TryParse(state.User.FindFirst(ClaimTypes.NameIdentifier)?.Value, out var id))
+        {
+            var info = await UserSvc.GetInfoAsync(id);
+            _avatar = info?.AvatarBase64;
+        }
+    }
+
+    private void DrawerToggle() => _drawerOpen = !_drawerOpen;
+
+    private static string RoleLabel(string? role) => role switch
+    {
+        "Admin" => "Администратор",
+        "Teacher" => "Преподаватель",
+        "Student" => "Студент",
+        _ => "Гость"
+    };
+
+    private static string InitialsFor(string? name)
+    {
+        if (string.IsNullOrWhiteSpace(name)) return "?";
+        var parts = name.Trim().Split(' ', StringSplitOptions.RemoveEmptyEntries);
+        if (parts.Length >= 2) return (parts[0][0].ToString() + parts[1][0]).ToUpperInvariant();
+        return parts[0][..1].ToUpperInvariant();
+    }
+
+    private readonly PaletteDark _darkPalette = new()
+    {
+        Primary = "#7c5cff",
+        Secondary = "#3bd1c7",
+        Surface = "#171723",
+        Background = "#0f0f17",
+        BackgroundGray = "#0b0b12",
+        AppbarText = "#e6e6f0",
+        AppbarBackground = "#12121c",
+        DrawerBackground = "#12121c",
+        ActionDefault = "#a4a4b8",
+        ActionDisabled = "#9999994d",
+        ActionDisabledBackground = "#605f6d4d",
+        TextPrimary = "#e6e6f0",
+        TextSecondary = "#a4a4b8",
+        TextDisabled = "#ffffff33",
+        DrawerIcon = "#a4a4b8",
+        DrawerText = "#cfcfdc",
+        GrayLight = "#2a2833",
+        GrayLighter = "#1e1e2d",
+        Info = "#4a86ff",
+        Success = "#3dcb6c",
+        Warning = "#ffb545",
+        Error = "#ff3f5f",
+        LinesDefault = "#26263a",
+        TableLines = "#26263a",
+        Divider = "#26263a",
+        OverlayLight = "#1e1e2d80"
+    };
+}

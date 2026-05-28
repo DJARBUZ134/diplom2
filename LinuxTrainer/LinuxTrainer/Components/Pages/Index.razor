@@ -1,0 +1,11 @@
+@page "/"
+@attribute [Authorize]
+@layout LinuxTrainer.Components.Layout.MainLayout
+@inject NavigationManager Nav
+
+@code {
+    protected override void OnInitialized()
+    {
+        Nav.NavigateTo("/profile", replace: true);
+    }
+}
