@@ -9,85 +9,85 @@ build_property.EnforceExtendedAnalyzerRules =
 build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property.RootNamespace = LinuxTrainer
 build_property.RootNamespace = LinuxTrainer
-build_property.ProjectDir = C:\Users\wss_v\Desktop\diplom2\linuxtrainer\linuxtrainer\
+build_property.ProjectDir = C:\Users\wss_v\Desktop\diplom2\LinuxTrainer\LinuxTrainer\
 build_property.EnableComHosting = 
 build_property.EnableGeneratedComInterfaceComImportInterop = 
 build_property.RazorLangVersion = 9.0
 build_property.SupportLocalizedComponentNames = 
 build_property.GenerateRazorMetadataSourceChecksumAttributes = 
-build_property.MSBuildProjectDirectory = C:\Users\wss_v\Desktop\diplom2\linuxtrainer\linuxtrainer
+build_property.MSBuildProjectDirectory = C:\Users\wss_v\Desktop\diplom2\LinuxTrainer\LinuxTrainer
 build_property._RazorSourceGeneratorDebug = 
 build_property.EffectiveAnalysisLevelStyle = 9.0
 build_property.EnableCodeStyleSeverity = 
 
-[C:/Users/wss_v/Desktop/diplom2/linuxtrainer/linuxtrainer/Components/App.razor]
+[C:/Users/wss_v/Desktop/diplom2/LinuxTrainer/LinuxTrainer/Components/App.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xBcHAucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/wss_v/Desktop/diplom2/linuxtrainer/linuxtrainer/Components/Auth/RedirectToLogin.razor]
+[C:/Users/wss_v/Desktop/diplom2/LinuxTrainer/LinuxTrainer/Components/Auth/RedirectToLogin.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xBdXRoXFJlZGlyZWN0VG9Mb2dpbi5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/wss_v/Desktop/diplom2/linuxtrainer/linuxtrainer/Components/Layout/CookieConsent.razor]
+[C:/Users/wss_v/Desktop/diplom2/LinuxTrainer/LinuxTrainer/Components/Layout/CookieConsent.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xMYXlvdXRcQ29va2llQ29uc2VudC5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/wss_v/Desktop/diplom2/linuxtrainer/linuxtrainer/Components/Layout/MainLayout.razor]
+[C:/Users/wss_v/Desktop/diplom2/LinuxTrainer/LinuxTrainer/Components/Layout/MainLayout.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xMYXlvdXRcTWFpbkxheW91dC5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/wss_v/Desktop/diplom2/linuxtrainer/linuxtrainer/Components/Pages/Admin/Users.razor]
+[C:/Users/wss_v/Desktop/diplom2/LinuxTrainer/LinuxTrainer/Components/Pages/Admin/Users.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xBZG1pblxVc2Vycy5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/wss_v/Desktop/diplom2/linuxtrainer/linuxtrainer/Components/Pages/Error.razor]
+[C:/Users/wss_v/Desktop/diplom2/LinuxTrainer/LinuxTrainer/Components/Pages/Error.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xFcnJvci5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/wss_v/Desktop/diplom2/linuxtrainer/linuxtrainer/Components/Pages/Index.razor]
+[C:/Users/wss_v/Desktop/diplom2/LinuxTrainer/LinuxTrainer/Components/Pages/Index.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xJbmRleC5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/wss_v/Desktop/diplom2/linuxtrainer/linuxtrainer/Components/Pages/Login.razor]
+[C:/Users/wss_v/Desktop/diplom2/LinuxTrainer/LinuxTrainer/Components/Pages/Login.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xMb2dpbi5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/wss_v/Desktop/diplom2/linuxtrainer/linuxtrainer/Components/Pages/Profile.razor]
+[C:/Users/wss_v/Desktop/diplom2/LinuxTrainer/LinuxTrainer/Components/Pages/Profile.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xQcm9maWxlLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/wss_v/Desktop/diplom2/linuxtrainer/linuxtrainer/Components/Pages/QuestDetails.razor]
+[C:/Users/wss_v/Desktop/diplom2/LinuxTrainer/LinuxTrainer/Components/Pages/QuestDetails.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xRdWVzdERldGFpbHMucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/wss_v/Desktop/diplom2/linuxtrainer/linuxtrainer/Components/Pages/Quests.razor]
+[C:/Users/wss_v/Desktop/diplom2/LinuxTrainer/LinuxTrainer/Components/Pages/Quests.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xRdWVzdHMucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/wss_v/Desktop/diplom2/linuxtrainer/linuxtrainer/Components/Pages/Settings.razor]
+[C:/Users/wss_v/Desktop/diplom2/LinuxTrainer/LinuxTrainer/Components/Pages/Settings.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xTZXR0aW5ncy5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/wss_v/Desktop/diplom2/linuxtrainer/linuxtrainer/Components/Pages/Teacher/Quests.razor]
+[C:/Users/wss_v/Desktop/diplom2/LinuxTrainer/LinuxTrainer/Components/Pages/Teacher/Quests.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xUZWFjaGVyXFF1ZXN0cy5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/wss_v/Desktop/diplom2/linuxtrainer/linuxtrainer/Components/Pages/Teacher/Reviews.razor]
+[C:/Users/wss_v/Desktop/diplom2/LinuxTrainer/LinuxTrainer/Components/Pages/Teacher/Reviews.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xUZWFjaGVyXFJldmlld3MucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/wss_v/Desktop/diplom2/linuxtrainer/linuxtrainer/Components/Pages/Teacher/Students.razor]
+[C:/Users/wss_v/Desktop/diplom2/LinuxTrainer/LinuxTrainer/Components/Pages/Teacher/Students.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xUZWFjaGVyXFN0dWRlbnRzLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/wss_v/Desktop/diplom2/linuxtrainer/linuxtrainer/Components/Pages/Terminal.razor]
+[C:/Users/wss_v/Desktop/diplom2/LinuxTrainer/LinuxTrainer/Components/Pages/Terminal.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xUZXJtaW5hbC5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/wss_v/Desktop/diplom2/linuxtrainer/linuxtrainer/Components/Routes.razor]
+[C:/Users/wss_v/Desktop/diplom2/LinuxTrainer/LinuxTrainer/Components/Routes.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xSb3V0ZXMucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/wss_v/Desktop/diplom2/linuxtrainer/linuxtrainer/Components/_Imports.razor]
+[C:/Users/wss_v/Desktop/diplom2/LinuxTrainer/LinuxTrainer/Components/_Imports.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xfSW1wb3J0cy5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
